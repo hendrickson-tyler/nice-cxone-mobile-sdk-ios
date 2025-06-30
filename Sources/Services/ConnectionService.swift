@@ -534,34 +534,35 @@ private extension ConnectionService {
     /// - Throws: ``URLError.badServerResponse`` if the URL Loading system received bad data from the server.
     /// - Throws: ``NSError`` object that indicates why the request failed
     func isLiveChatAvailable() async throws -> Bool {
-        guard connectionContext.channelConfig.liveChatAvailability.expires <= Date.provide() else {
-            return connectionContext.channelConfig.liveChatAvailability.isOnline
-        }
-        guard let url = connectionContext.environment.chatServerUrl?.liveChatAvailabilityUrl(
-            brandId: connectionContext.brandId,
-            channelId: connectionContext.channelId
-        ) else {
-            throw CXoneChatError.channelConfigFailure
-        }
+        return true
+        // guard connectionContext.channelConfig.liveChatAvailability.expires <= Date.provide() else {
+        //     return connectionContext.channelConfig.liveChatAvailability.isOnline
+        // }
+        // guard let url = connectionContext.environment.chatServerUrl?.liveChatAvailabilityUrl(
+        //     brandId: connectionContext.brandId,
+        //     channelId: connectionContext.channelId
+        // ) else {
+        //     throw CXoneChatError.channelConfigFailure
+        // }
         
-        let isOnline = try await Task
-            .retrying {
-                let (data, _) = try await self.connectionContext.session.fetch(from: url)
-                let response = try JSONDecoder().decode(LiveChatAvailabilityDTO.self, from: data)
+        // let isOnline = try await Task
+        //     .retrying {
+        //         let (data, _) = try await self.connectionContext.session.fetch(from: url)
+        //         let response = try JSONDecoder().decode(LiveChatAvailabilityDTO.self, from: data)
                 
-                return response.isOnline
-            }
-            .value
+        //         return response.isOnline
+        //     }
+        //     .value
         
-        connectionContext.channelConfig = connectionContext.channelConfig.copy(
-            liveChatAvailability: CurrentLiveChatAvailability(
-                isChannelLiveChat: connectionContext.chatMode == .liveChat,
-                isOnline: isOnline,
-                expires: Date.provide().addingTimeInterval(CurrentLiveChatAvailability.expirationInterval)
-            )
-        )
+        // connectionContext.channelConfig = connectionContext.channelConfig.copy(
+        //     liveChatAvailability: CurrentLiveChatAvailability(
+        //         isChannelLiveChat: connectionContext.chatMode == .liveChat,
+        //         isOnline: isOnline,
+        //         expires: Date.provide().addingTimeInterval(CurrentLiveChatAvailability.expirationInterval)
+        //     )
+        // )
         
-        return connectionContext.channelConfig.liveChatAvailability.isOnline
+        // return connectionContext.channelConfig.liveChatAvailability.isOnline
     }
 }
 
